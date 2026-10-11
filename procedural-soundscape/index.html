@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#080a12" />
+    <meta name="description" content="A WebGL colour field driven by generated synthetic signals." />
+    <title>Procedural Soundscape</title>
+  </head>
+  <body>
+    <main class="app-shell">
+      <canvas id="field" aria-label="Animated procedural colour field"></canvas>
+      <section class="controls" aria-labelledby="title">
+        <p class="eyebrow">Synthetic signal study</p>
+        <h1 id="title">Procedural Soundscape</h1>
+        <p class="lede">A moving colour field driven by generated rhythm data. This demo plays no audio and loads no recordings.</p>
+        <label for="tempo">Tempo <output id="tempo-value">96 BPM</output></label>
+        <input id="tempo" type="range" min="60" max="160" value="96" />
+        <label for="intensity">Signal strength <output id="intensity-value">65%</output></label>
+        <input id="intensity" type="range" min="15" max="95" value="65" />
+        <label for="preset">Visual preset</label>
+        <select id="preset">
+          <option value="kinetic-light-trails">Kinetic light trails</option>
+          <option value="aquarium-caustic-field">Caustic field</option>
+          <option value="impact-tear-glitch">Tear and glitch</option>
+          <option value="lush-bloom-prism">Lush bloom</option>
+          <option value="soft-static-fiber-field">Soft fiber field</option>
+        </select>
+        <button id="toggle" type="button" aria-pressed="true">Pause motion</button>
+        <p class="status" id="status" role="status">WebGL2 ready · generated signal active</p>
+      </section>
+      <p class="footer-note">No music, microphone, album art, or network data is used.</p>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,942 @@
+.shell {
+  --bg-default: #07090e;
+  --bg-panel: rgba(255, 255, 255, 0.045);
+  --bg-elevated: rgba(15, 19, 29, 0.92);
+  --text-primary: #f4f7fb;
+  --text-secondary: rgba(219, 234, 254, 0.68);
+  --text-strong: #f4f7fb;
+  --border-subtle: rgba(169, 255, 204, 0.16);
+  --border-strong: rgba(169, 255, 204, 0.34);
+  --primary: #a9ffcc;
+  --primary-hover: #69f0a7;
+  --primary-active: #7feeb5;
+  --primary-deep: #a9ffcc;
+  --selection-bg: rgba(169, 255, 204, 0.12);
+  --hover-tint: rgba(169, 255, 204, 0.16);
+  --focus-ring: #a9ffcc;
+  --danger: #ffcb92;
+  --danger-soft: rgba(255, 203, 146, 0.12);
+  --warning: #F2C84B;
+  --warning-soft: #FFF4CC;
+  position: relative;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100svh;
+  padding: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 44%),
+    var(--bg-default);
+  color: var(--text-primary);
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.shell button,
+.shell select,
+.shell input {
+  font: inherit;
+}
+
+.topBar {
+  position: absolute;
+  z-index: 8;
+  top: 18px;
+  left: 18px;
+  right: auto;
+  width: auto;
+  max-width: calc(100vw - 32px);
+  display: block;
+  min-height: 0;
+  overflow: visible;
+  padding: 0;
+}
+
+.topBar p,
+.topBar h1 {
+  margin: 0;
+}
+
+.topActionButtons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topBar p,
+.panelHeading p {
+  color: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.topBar h1 {
+  color: var(--text-primary);
+  font-size: clamp(1rem, 1.4vw, 1.35rem);
+  letter-spacing: 0;
+}
+
+.guideButton,
+.fullscreenButton,
+.guideClose {
+  height: 38px;
+  min-height: 38px;
+  padding-block: 0;
+  border: 1px solid var(--primary);
+  border-radius: 999px;
+  background: rgba(7, 9, 14, 0.78);
+  color: var(--text-primary);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    transform 140ms ease;
+}
+
+.guideButton {
+  padding-inline: 14px;
+}
+
+.fullscreenButton {
+  min-width: 118px;
+  padding-inline: 14px;
+}
+
+.guideButton:hover,
+.fullscreenButton:hover,
+.guideClose:hover {
+  border-color: var(--primary-hover);
+  background: rgba(169, 255, 204, 0.12);
+}
+
+.guideButton:active,
+.fullscreenButton:active,
+.guideClose:active {
+  transform: translateY(1px);
+}
+
+.guideButton:focus-visible,
+.fullscreenButton:focus-visible,
+.guideClose:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.guideButton[aria-expanded="true"] {
+  border-color: var(--primary-active);
+  background: rgba(169, 255, 204, 0.18);
+}
+
+.guidePopover {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  left: 0;
+  display: grid;
+  gap: 10px;
+  width: min(430px, calc(100vw - 32px));
+  padding: 14px;
+  border: 1px solid rgba(159, 180, 211, 0.78);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(15, 19, 29, 0.94), rgba(8, 12, 22, 0.9));
+  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(20px);
+  max-height: calc(100svh - 78px);
+  overflow: auto;
+}
+
+.guideHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.guideClose {
+  padding: 6px 9px;
+  border-color: var(--border-strong);
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text-primary);
+  font-size: 0.68rem;
+}
+
+.guidePopover h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.24rem;
+  line-height: 1.16;
+}
+
+.guidePopover > p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.52;
+  text-transform: none;
+}
+
+.guideFacts {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.guideFacts div {
+  display: grid;
+  gap: 3px;
+  padding: 9px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.guideFacts dt {
+  color: var(--primary);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.guideFacts dd {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.guideFacts dd:first-letter {
+  color: var(--text-secondary);
+}
+
+.guideFacts dd span {
+  color: var(--primary-deep);
+  font-weight: 800;
+}
+
+.topStatus {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.topStatus span,
+.topStatus strong {
+  min-height: 30px;
+  padding: 7px 9px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  background: var(--bg-panel);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.1;
+}
+
+.topStatus strong {
+  border-color: var(--primary);
+  background: var(--selection-bg);
+  color: var(--primary-deep);
+}
+
+.labGrid {
+  position: absolute;
+  inset: 0;
+  display: block;
+  min-height: 0;
+}
+
+.panel,
+.stagePanel,
+.timeline {
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(15, 19, 29, 0.92), rgba(10, 13, 20, 0.84));
+  color: var(--text-primary);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+  backdrop-filter: blur(18px);
+}
+
+.panel {
+  position: absolute;
+  z-index: 7;
+  top: 18px;
+  bottom: 18px;
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  width: min(370px, calc(100vw - 36px));
+  min-height: 0;
+  max-height: calc(100svh - 36px);
+  padding: 10px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  font-size: 0.86rem;
+}
+
+.labGrid > .panel:first-child {
+  right: 18px;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 1px;
+}
+
+.panelHeading {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.panelHeading p,
+.panelHeading h2 {
+  margin: 0;
+}
+
+.panelHeading h2 {
+  color: var(--text-strong);
+  font-size: 1rem;
+}
+
+.controlSection {
+  display: grid;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.022)),
+    rgba(255, 255, 255, 0.025);
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.sectionHeading h3 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sectionHeading span {
+  max-width: 56%;
+  overflow: hidden;
+  padding: 4px 7px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--primary-deep);
+  font-size: 0.68rem;
+  font-weight: 850;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fieldStack {
+  display: grid;
+  gap: 7px;
+}
+
+.panelActions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 5px;
+}
+
+.panelUtilityButton,
+.restorePanelButton {
+  min-height: 26px;
+  padding: 5px 9px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease,
+    transform 140ms ease;
+}
+
+.panelUtilityButton:hover,
+.restorePanelButton:hover {
+  border-color: var(--primary);
+  background: rgba(169, 255, 204, 0.12);
+  color: var(--primary-deep);
+}
+
+.panelUtilityButton:active,
+.restorePanelButton:active {
+  transform: translateY(1px);
+}
+
+.panelUtilityButton:focus-visible,
+.restorePanelButton:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.panelUtilityButton[data-danger="true"],
+.restorePanelButton[data-danger="true"] {
+  border-color: rgba(255, 203, 146, 0.3);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.minimizedPanelControls {
+  position: absolute;
+  z-index: 7;
+  top: 18px;
+  right: 18px;
+  display: flex;
+  gap: 8px;
+  padding: 7px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(15, 19, 29, 0.92), rgba(10, 13, 20, 0.84));
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+  backdrop-filter: blur(18px);
+}
+
+.controlsMinimized .timeline {
+  right: 18px;
+}
+
+.ruleDescription,
+.shortStatus {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.38;
+}
+
+.selectLabel,
+.slider {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.selectLabel span,
+.sliderHeader {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.selectLabel select {
+  min-height: 32px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: rgba(8, 12, 20, 0.64);
+  color: var(--text-primary);
+}
+
+.sliderHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.sliderHeader span {
+  display: grid;
+  gap: 2px;
+}
+
+.sliderHeader small {
+  color: var(--text-secondary);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.sliderHeader strong {
+  color: var(--primary-deep);
+  white-space: nowrap;
+}
+
+.slider input[type="range"] {
+  width: 100%;
+  accent-color: var(--primary);
+}
+
+.actionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.playbackGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.playbackGrid .button_primary {
+  grid-column: 1 / -1;
+}
+
+.toolsGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.toolsGrid .button {
+  padding-inline: 6px;
+  font-size: 0.82rem;
+}
+
+.button {
+  min-height: 30px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease,
+    transform 140ms ease;
+}
+
+.button:hover {
+  border-color: var(--border-strong);
+  background: var(--hover-tint);
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button:focus-visible,
+.selectLabel select:focus-visible,
+.slider input:focus-visible,
+.canvas:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.button_primary {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #07100c;
+  font-weight: 800;
+}
+
+.button_primary:hover {
+  background: var(--primary-hover);
+  color: #07100c;
+}
+
+.button_secondary[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: var(--selection-bg);
+  color: var(--primary-deep);
+  font-weight: 800;
+}
+
+.button_danger {
+  border-color: rgba(255, 203, 146, 0.3);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.wideButton {
+  width: 100%;
+}
+
+.stagePanel {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.canvasShell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100svh;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(43, 99, 217, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(43, 99, 217, 0.04) 1px, transparent 1px),
+    #FFFFFF;
+  background-size: 24px 24px;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.canvasLegend {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 78px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: rgba(7, 9, 14, 0.66);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  pointer-events: none;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(14px);
+}
+
+.canvasLegend strong {
+  color: var(--primary-deep);
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin: 0;
+}
+
+.metric {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.metric dt {
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+}
+
+.metric dd {
+  margin: 0;
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 0.96rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summaryBox {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.summaryBox h3,
+.summaryBox p {
+  margin: 0;
+}
+
+.summaryBox h3 {
+  color: var(--text-strong);
+  font-size: 0.9rem;
+}
+
+.summaryBox p,
+.mappingList {
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  line-height: 1.48;
+}
+
+.mappingList {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-left: 17px;
+}
+
+.observerPanel {
+  display: grid;
+  gap: 9px;
+  min-height: 244px;
+  max-height: min(300px, 34svh);
+  padding: 10px;
+  overflow: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.022)),
+    rgba(255, 255, 255, 0.025);
+  scrollbar-gutter: stable;
+}
+
+.observerPanel .panelHeading {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+}
+
+.observerPanel .panelHeading p {
+  grid-column: 1 / -1;
+}
+
+.observerPanel .metric {
+  gap: 2px;
+  padding: 6px 8px;
+}
+
+.observerPanel .metric dt {
+  font-size: 0.66rem;
+}
+
+.observerPanel .metric dd {
+  font-size: 0.88rem;
+}
+
+.observerPanel .summaryBox {
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.timeline {
+  position: absolute;
+  z-index: 7;
+  left: 18px;
+  right: 406px;
+  bottom: 18px;
+  width: auto;
+  min-width: 0;
+  transform: none;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px 10px 46px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(15, 19, 29, 0.96), rgba(10, 13, 20, 0.92));
+}
+
+.timeline span {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sparkline {
+  display: flex;
+  align-items: end;
+  gap: 2px;
+  height: 30px;
+  min-width: 0;
+}
+
+.sparkline i {
+  flex: 1 1 4px;
+  min-width: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--primary);
+  opacity: 0.72;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .panel,
+  .timeline,
+  .canvasLegend {
+    opacity: 0.9;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .panel:hover,
+  .panel:focus-within,
+  .timeline:hover,
+  .timeline:focus-within,
+  .canvasShell:hover .canvasLegend {
+    opacity: 1;
+  }
+
+  .panel:hover,
+  .panel:focus-within,
+  .timeline:hover,
+  .timeline:focus-within {
+    box-shadow: 0 24px 68px rgba(45, 77, 118, 0.18);
+  }
+}
+
+@media (max-width: 1120px) {
+  .topBar {
+    top: 12px;
+    left: 12px;
+    right: auto;
+  }
+
+  .panel {
+    top: 12px;
+    bottom: 72px;
+    width: min(370px, calc(100vw - 24px));
+    max-height: calc(100svh - 84px);
+  }
+
+  .labGrid > .panel:first-child {
+    right: 12px;
+  }
+
+  .minimizedPanelControls {
+    top: 12px;
+    right: 12px;
+  }
+
+  .timeline {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+    min-width: 0;
+  }
+
+  .controlsMinimized .timeline {
+    right: 12px;
+  }
+
+  .canvasLegend {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .panel {
+    top: 76px;
+    bottom: 68px;
+    max-height: calc(100svh - 144px);
+  }
+
+  .labGrid > .panel:first-child {
+    right: 10px;
+    width: min(370px, calc(100vw - 20px));
+  }
+
+  .minimizedPanelControls {
+    top: 12px;
+    right: 12px;
+  }
+
+  .summaryBox {
+    display: none;
+  }
+
+  .metricGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .topBar {
+    top: 12px;
+    left: 12px;
+    right: auto;
+  }
+
+  .labGrid > .panel:first-child {
+    left: 12px;
+    right: 12px;
+    width: auto;
+  }
+
+  .labGrid > .panel:first-child {
+    top: auto;
+    bottom: 64px;
+    max-height: 48svh;
+  }
+
+  .minimizedPanelControls {
+    top: 12px;
+    right: 12px;
+    bottom: auto;
+    left: auto;
+    width: auto;
+    justify-content: end;
+  }
+
+  .minimizedPanelControls .restorePanelButton[data-danger="true"] {
+    display: none;
+  }
+
+  .actionGrid,
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .timeline {
+    grid-template-columns: 1fr;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    width: auto;
+  }
+
+  .controlsMinimized .timeline {
+    right: 8px;
+  }
+
+  .timeline span {
+    display: none;
+  }
+
+  .canvasLegend {
+    bottom: 62px;
+    left: 8px;
+  }
+}

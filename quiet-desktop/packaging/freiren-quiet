@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /usr/bin/python -I /usr/lib/freiren-quiet/launcher.py "$@"

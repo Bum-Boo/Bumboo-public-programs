@@ -1,0 +1,9 @@
+// ES3-compatible JSON parser. Validation is required before eval in ExtendScript.
+function parseToolkitJSON(text) {
+    if (!/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@")
+        .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]")
+        .replace(/(?:^|:|,)(?:\s*\[)+/g, ""))) {
+        throw new Error("Invalid tracking JSON");
+    }
+    return eval("(" + text + ")");
+}

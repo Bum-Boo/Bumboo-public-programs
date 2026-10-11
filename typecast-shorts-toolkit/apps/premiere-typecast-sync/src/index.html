@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        margin: 0;
+        padding: 12px;
+        background: #202020;
+        color: #f2f2f2;
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      button {
+        width: 100%;
+        margin: 0 0 8px;
+        padding: 8px 10px;
+        color: #f2f2f2;
+        background: #3b3b3b;
+        border: 1px solid #5a5a5a;
+        border-radius: 4px;
+      }
+
+      button:disabled {
+        color: #8d8d8d;
+      }
+
+      .status {
+        min-height: 220px;
+        padding: 10px;
+        background: #151515;
+        border: 1px solid #3a3a3a;
+        border-radius: 4px;
+        white-space: pre-wrap;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Typecast Shorts Sync</h1>
+    <button id="refreshSequence">Refresh Active Sequence</button>
+    <button id="selectFolder">Select Typecast Folder</button>
+    <button id="generate" disabled>Generate Captions</button>
+    <div id="status" class="status">No folder selected.</div>
+    <script src="main.js"></script>
+  </body>
+</html>

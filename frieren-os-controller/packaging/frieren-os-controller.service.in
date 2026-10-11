@@ -1,0 +1,15 @@
+[Unit]
+Description=Frieren OS Controller local API
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=@EXEC@ daemon
+Restart=on-failure
+RestartSec=2
+UMask=0077
+NoNewPrivileges=yes
+WorkingDirectory=@PROJECT@
+
+[Install]
+WantedBy=default.target

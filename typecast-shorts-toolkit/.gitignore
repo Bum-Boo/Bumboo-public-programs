@@ -1,0 +1,25 @@
+node_modules/
+dist/
+build/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+
+# Source archive boundaries
+.env
+.env.*
+!.env.example
+*.db
+*.sqlite*
+*.log
+node_modules/
+.venv/
+__pycache__/
+private_data/
+.runtime/
+.evidence/
+dist/
+build/

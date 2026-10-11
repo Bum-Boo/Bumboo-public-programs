@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=프리렌 OS 컨트롤러
+Comment=서비스와 타이머, 시스템 상태 관리
+Exec=@EXEC@ gui
+Icon=io.github.BumBoo.FrierenOSController
+Terminal=false
+Categories=System;
+StartupNotify=true

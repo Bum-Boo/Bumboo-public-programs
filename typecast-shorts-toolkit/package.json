@@ -1,0 +1,18 @@
+{
+  "name": "typecast-shorts-sync-toolkit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @typecast-sync/core",
+    "test": "npm run test -w @typecast-sync/core"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "typescript": "^5.8.3"
+  }
+}

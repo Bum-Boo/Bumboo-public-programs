@@ -1,0 +1,11 @@
+[Unit]
+Description=Release queued night work
+
+[Service]
+Type=oneshot
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=%h/.local/bin/agent-orchestrate worker --night
+TimeoutStartSec=60min
+KillMode=control-group
+UMask=0077
+Nice=10

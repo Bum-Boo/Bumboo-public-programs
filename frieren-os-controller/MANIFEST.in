@@ -1,0 +1,5 @@
+include LICENSE README.md
+recursive-include assets *.svg *.qml *.json
+recursive-include packaging *.py *.in
+recursive-include frieren_controller *.py
+recursive-include tests *.py

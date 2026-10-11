@@ -1,0 +1,13 @@
+{
+  "KPackageStructure": "Plasma/Applet",
+  "KPlugin": {
+    "Id": "io.github.BumBoo.FrierenController",
+    "Name": "프리렌 OS 컨트롤러",
+    "Description": "온도, 밝기와 작업 모드를 바탕화면에서 조절해요.",
+    "Icon": "preferences-system",
+    "Category": "System Information",
+    "Version": "0.6.0",
+    "Authors": [{"Name": "Bum-Boo"}]
+  },
+  "X-Plasma-API-Minimum-Version": "6.0"
+}

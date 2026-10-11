@@ -1,0 +1,11 @@
+[Unit]
+Description=Check registered orchestration inputs every five minutes
+
+[Timer]
+OnBootSec=3min
+OnUnitInactiveSec=5min
+AccuracySec=20s
+Unit=agent-orchestrate-watch.service
+
+[Install]
+WantedBy=timers.target

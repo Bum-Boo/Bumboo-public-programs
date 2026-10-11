@@ -1,0 +1,4 @@
+include LICENSE README.md THIRD_PARTY.md AGENTS.md CONTRIBUTING.md SECURITY.md requirements-tested.txt
+recursive-include docs *.md *.png *.json
+recursive-include tools *.py
+recursive-include tests *.py

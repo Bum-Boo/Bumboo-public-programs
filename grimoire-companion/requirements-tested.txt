@@ -1,0 +1,4 @@
+# Runtime versions verified on the initial Linux/X11 installation.
+# Optional reproducible install: pip install -c requirements-tested.txt .
+PySide6-Essentials==6.11.2
+shiboken6==6.11.2
