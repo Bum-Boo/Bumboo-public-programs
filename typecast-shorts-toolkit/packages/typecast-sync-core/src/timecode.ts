@@ -1,5 +1,5 @@
 const TIMESTAMP_PATTERN =
-  /^(?:(\d{1,2}):)?(\d{1,2}):(\d{2})([,.](\d{1,3}))?$/;
+  /^(?:(\d+):)?(\d{1,2}):(\d{2})([,.](\d{1,3}))?$/;
 
 export function timestampToSeconds(value: string): number {
   const match = value.trim().match(TIMESTAMP_PATTERN);

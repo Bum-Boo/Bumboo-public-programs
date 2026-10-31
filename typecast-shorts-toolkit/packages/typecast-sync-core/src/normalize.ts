@@ -21,28 +21,22 @@ export function splitLongCue(
   const lines: string[] = [];
   let current = "";
 
-  for (let index = 0; index < words.length; index += 1) {
-    const word = words[index];
+  for (const word of words) {
     const next = current ? `${current} ${word}` : word;
 
-    if (next.length <= maxCharsPerLine || current.length === 0) {
+    // The last allowed line takes all remaining words, so no text is dropped.
+    if (next.length <= maxCharsPerLine || current.length === 0 || lines.length === maxLines - 1) {
       current = next;
       continue;
     }
 
     lines.push(current);
     current = word;
-
-    if (lines.length === maxLines - 1) {
-      const remaining = [current, ...words.slice(index + 1)].join(" ");
-      lines.push(remaining);
-      return lines.join("\n");
-    }
   }
 
   if (current) {
     lines.push(current);
   }
 
-  return lines.slice(0, maxLines).join("\n");
+  return lines.join("\n");
 }

@@ -3,9 +3,9 @@ import type { CaptionCue, CaptionWord } from "./types.js";
 
 const CUE_TEXT_KEYS = ["text", "caption", "content", "line", "sentence", "displayText", "transcript"];
 const WORD_TEXT_KEYS = ["word", "text", "value", "token", "char", "character"];
-const START_KEYS = ["startSeconds", "start_seconds", "start", "startTime", "start_time", "from", "begin", "beginTime", "offset"];
-const END_KEYS = ["endSeconds", "end_seconds", "end", "endTime", "end_time", "to", "finish", "finishTime"];
-const DURATION_KEYS = ["durationSeconds", "duration_seconds", "duration", "length"];
+const START_KEYS = ["startSeconds", "start_seconds", "start", "startTime", "start_time", "from", "begin", "beginTime", "offset", "start_ms"];
+const END_KEYS = ["endSeconds", "end_seconds", "end", "endTime", "end_time", "to", "finish", "finishTime", "end_ms"];
+const DURATION_KEYS = ["durationSeconds", "duration_seconds", "duration", "length", "duration_ms"];
 
 export function parseTypecastJson(input: unknown): CaptionCue[] {
   const root = typeof input === "string" ? JSON.parse(input.replace(/^\uFEFF/, "")) : input;
@@ -180,7 +180,7 @@ function readEndSeconds(object: Record<string, unknown>, startSeconds: number | 
   for (const key of DURATION_KEYS) {
     const duration = numberFromUnknown(object[key]);
     if (duration !== undefined) {
-      return startSeconds + duration;
+      return startSeconds + (/_ms$/i.test(key) ? duration / 1000 : duration);
     }
   }
 

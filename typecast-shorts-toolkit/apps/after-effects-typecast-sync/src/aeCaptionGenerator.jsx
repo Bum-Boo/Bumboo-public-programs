@@ -193,7 +193,7 @@ TCSS_AE.parseSrt = function (input) {
   var lines = String(input).replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n");
   var cues = [];
   var index = 0;
-  var timingPattern = /^\s*((?:\d{1,2}:)?\d{1,2}:\d{2}[,.]\d{1,3})\s*-->\s*((?:\d{1,2}:)?\d{1,2}:\d{2}[,.]\d{1,3})(?:\s+.*)?$/;
+  var timingPattern = /^\s*((?:\d+:)?\d{1,2}:\d{2}[,.]\d{1,3})\s*-->\s*((?:\d+:)?\d{1,2}:\d{2}[,.]\d{1,3})(?:\s+.*)?$/;
 
   while (index < lines.length) {
     while (index < lines.length && lines[index].replace(/\s/g, "") === "") {
@@ -256,6 +256,10 @@ TCSS_AE.parseTypecastJson = function (input) {
     return b.length - a.length;
   });
 
+  candidates[0].sort(function (a, b) {
+    return a.startSeconds - b.startSeconds;
+  });
+
   for (var index = 0; index < candidates[0].length; index += 1) {
     candidates[0][index].id = index + 1;
   }
@@ -292,11 +296,11 @@ TCSS_AE.jsonObjectToCue = function (value) {
   }
 
   var text = TCSS_AE.firstString(value, ["text", "caption", "content", "line", "sentence", "displayText", "transcript"]);
-  var start = TCSS_AE.firstNumber(value, ["startSeconds", "start_seconds", "start", "startTime", "start_time", "from", "begin", "offset"]);
-  var end = TCSS_AE.firstNumber(value, ["endSeconds", "end_seconds", "end", "endTime", "end_time", "to", "finish"]);
+  var start = TCSS_AE.firstNumber(value, ["startSeconds", "start_seconds", "start", "startTime", "start_time", "from", "begin", "offset", "start_ms"]);
+  var end = TCSS_AE.firstNumber(value, ["endSeconds", "end_seconds", "end", "endTime", "end_time", "to", "finish", "end_ms"]);
 
   if (end === null && start !== null) {
-    var duration = TCSS_AE.firstNumber(value, ["durationSeconds", "duration_seconds", "duration", "length"]);
+    var duration = TCSS_AE.firstNumber(value, ["durationSeconds", "duration_seconds", "duration", "length", "duration_ms"]);
     if (duration !== null) {
       end = start + duration;
     }
@@ -315,6 +319,7 @@ TCSS_AE.jsonObjectToCue = function (value) {
 };
 
 TCSS_AE.parseJson = function (input) {
+  input = String(input).replace(/^\uFEFF/, "");
   if (typeof JSON !== "undefined" && JSON.parse) {
     return JSON.parse(input);
   }
@@ -357,7 +362,7 @@ TCSS_AE.firstNumber = function (object, keys) {
 };
 
 TCSS_AE.timestampToSeconds = function (value) {
-  var match = String(value).replace(/^\s+|\s+$/g, "").match(/^(?:(\d{1,2}):)?(\d{1,2}):(\d{2})([,.](\d{1,3}))?$/);
+  var match = String(value).replace(/^\s+|\s+$/g, "").match(/^(?:(\d+):)?(\d{1,2}):(\d{2})([,.](\d{1,3}))?$/);
 
   if (!match) {
     throw new Error("Invalid timestamp: " + value);

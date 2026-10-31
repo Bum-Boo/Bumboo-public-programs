@@ -242,7 +242,7 @@
     var lines = String(input).replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n");
     var cues = [];
     var index = 0;
-    var timingPattern = /^\s*((?:\d{1,2}:)?\d{1,2}:\d{2}[,.]\d{1,3})\s*-->\s*((?:\d{1,2}:)?\d{1,2}:\d{2}[,.]\d{1,3})(?:\s+.*)?$/;
+    var timingPattern = /^\s*((?:\d+:)?\d{1,2}:\d{2}[,.]\d{1,3})\s*-->\s*((?:\d+:)?\d{1,2}:\d{2}[,.]\d{1,3})(?:\s+.*)?$/;
 
     while (index < lines.length) {
       while (index < lines.length && lines[index].trim() === "") {
@@ -290,7 +290,7 @@
     var lines = String(input).replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n");
     var cues = [];
     var index = 0;
-    var timingPattern = /^\s*((?:\d{1,2}:)?\d{1,2}:\d{2}[,.]\d{1,3})\s*-->\s*((?:\d{1,2}:)?\d{1,2}:\d{2}[,.]\d{1,3})(?:\s+.*)?$/;
+    var timingPattern = /^\s*((?:\d+:)?\d{1,2}:\d{2}[,.]\d{1,3})\s*-->\s*((?:\d+:)?\d{1,2}:\d{2}[,.]\d{1,3})(?:\s+.*)?$/;
 
     if (lines[index] && lines[index].trim().indexOf("WEBVTT") === 0) {
       index += 1;
@@ -337,7 +337,7 @@
   }
 
   function parseTypecastJson(input) {
-    var root = JSON.parse(input);
+    var root = JSON.parse(String(input).replace(/^\uFEFF/, ""));
     var candidates = [];
     collectCueArrays(root, candidates);
 
@@ -382,11 +382,11 @@
     }
 
     var text = firstString(value, ["text", "caption", "content", "line", "sentence", "displayText", "transcript"]);
-    var start = firstNumber(value, ["startSeconds", "start_seconds", "start", "startTime", "start_time", "from", "begin", "offset"]);
-    var end = firstNumber(value, ["endSeconds", "end_seconds", "end", "endTime", "end_time", "to", "finish"]);
+    var start = firstNumber(value, ["startSeconds", "start_seconds", "start", "startTime", "start_time", "from", "begin", "offset", "start_ms"]);
+    var end = firstNumber(value, ["endSeconds", "end_seconds", "end", "endTime", "end_time", "to", "finish", "end_ms"]);
 
     if (end === null && start !== null) {
-      var duration = firstNumber(value, ["durationSeconds", "duration_seconds", "duration", "length"]);
+      var duration = firstNumber(value, ["durationSeconds", "duration_seconds", "duration", "length", "duration_ms"]);
       if (duration !== null) {
         end = start + duration;
       }
@@ -437,7 +437,7 @@
   }
 
   function timestampToSeconds(value) {
-    var match = String(value).trim().match(/^(?:(\d{1,2}):)?(\d{1,2}):(\d{2})([,.](\d{1,3}))?$/);
+    var match = String(value).trim().match(/^(?:(\d+):)?(\d{1,2}):(\d{2})([,.](\d{1,3}))?$/);
     if (!match) {
       throw new Error("Invalid timestamp: " + value);
     }

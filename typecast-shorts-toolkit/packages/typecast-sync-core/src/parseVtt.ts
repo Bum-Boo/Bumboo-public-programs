@@ -3,7 +3,7 @@ import { timestampToSeconds } from "./timecode.js";
 import type { CaptionCue } from "./types.js";
 
 const VTT_TIMING_LINE =
-  /^\s*((?:\d{1,2}:)?\d{1,2}:\d{2}[,.]\d{1,3})\s*-->\s*((?:\d{1,2}:)?\d{1,2}:\d{2}[,.]\d{1,3})(?:\s+.*)?$/;
+  /^\s*((?:\d+:)?\d{1,2}:\d{2}[,.]\d{1,3})\s*-->\s*((?:\d+:)?\d{1,2}:\d{2}[,.]\d{1,3})(?:\s+.*)?$/;
 
 export function parseVtt(input: string): CaptionCue[] {
   const lines = input.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n");
