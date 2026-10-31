@@ -28,7 +28,7 @@ def main():
     paths = sorted(args.depth_dir.glob("depth_*.png"))
     if not paths:
         raise RuntimeError("No depth PNGs in " + str(args.depth_dir))
-    proc = subprocess.Popen(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", "%dx%d" % (width, height), "-r", str(fps), "-i", "-", "-an", "-c:v", "libx264", "-crf", "15", "-pix_fmt", "yuv420p", str(args.out)], stdin=subprocess.PIPE)
+    proc = subprocess.Popen(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", "%dx%d" % (width, height), "-r", str(fps), "-i", "-", "-an", "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2", "-c:v", "libx264", "-crf", "15", "-pix_fmt", "yuv420p", str(args.out)], stdin=subprocess.PIPE)
     ys, xs = np.mgrid[0:height:args.stride, 0:width:args.stride]
     x = ((xs.ravel().astype(np.float32) - width / 2) / width) * 2
     y = ((ys.ravel().astype(np.float32) - height / 2) / height) * 2
