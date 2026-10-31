@@ -2,6 +2,7 @@
 
 import json
 import re
+import stat
 import time
 from pathlib import Path
 
@@ -13,11 +14,16 @@ MAX_RECORDS = 512
 
 
 def read_object(path: Path) -> dict:
+    if not stat.S_ISREG(path.stat().st_mode):
+        raise ValueError("record_not_regular_file")  # e.g. a FIFO would block the reader
     with path.open("rb") as stream:
         payload = stream.read(MAX_BYTES + 1)
     if len(payload) > MAX_BYTES:
         raise ValueError("record_too_large")
-    value = json.loads(payload)
+    try:
+        value = json.loads(payload)
+    except RecursionError:
+        raise ValueError("record_too_deep") from None
     if not isinstance(value, dict):
         raise ValueError("record_not_object")
     return value
@@ -83,6 +89,7 @@ def from_event(path: Path, now: float) -> Task:
     if state == "working" and now - updated > ttl:
         state = "attention"
     artifact = raw.get("artifact")
+    handoff = raw.get("handoff")
     return Task(
         "event:" + path.stem,
         clean_text(raw.get("title")) or path.stem,
@@ -91,10 +98,17 @@ def from_event(path: Path, now: float) -> Task:
         updated,
         "event",
         clean_text(raw.get("detail"), 400),
-        clean_text(raw.get("handoff"), 4096),
+        handoff if isinstance(handoff, str) and len(handoff) < 4096 else "",
         (artifact,) if isinstance(artifact, str) and len(artifact) < 4096 else (),
         str(raw.get("updated_at")),
     )
+
+
+def _mtime(path: Path) -> float:
+    try:
+        return path.stat().st_mtime
+    except OSError:  # Dangling symlink or a record removed mid-scan: parse step reports it.
+        return 0.0
 
 
 def collect(task_root: str, event_root: Path, now: float | None = None):
@@ -110,7 +124,7 @@ def collect(task_root: str, event_root: Path, now: float | None = None):
             continue
         try:
             paths = list(root.glob(pattern))
-            paths.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+            paths.sort(key=_mtime, reverse=True)
             if len(paths) > MAX_RECORDS:
                 errors.append("record_limit_reached")
             for path in paths[:MAX_RECORDS]:
