@@ -30,6 +30,8 @@ class ThermalPolicy:
     """5-second samples; fast reduction, slow recovery, and an independent hot guard."""
 
     def __init__(self, mode: str = "auto", target: int = 64):
+        # The 85°C guard is latched across mode changes; only cooling clears it.
+        self.emergency = False
         self.set_mode(mode)
         self.set_target(target)
 
@@ -40,7 +42,6 @@ class ThermalPolicy:
         self.cap = 60
         self.hot_samples = 0
         self.cool_samples = 0
-        self.emergency = False
 
     def set_target(self, target: int) -> None:
         if type(target) is not int or not 58 <= target <= 75:
@@ -56,7 +57,8 @@ class ThermalPolicy:
             self.cool_samples = 0
             self.hot_samples = 0
             self.cap = min(self.cap, 40)
-            return Decision(40, 1, "power-saver", "온도 센서를 읽을 수 없어 보수적으로 제한 중")
+            cap = 25 if self.emergency else 40
+            return Decision(cap, 1, "power-saver", "온도 센서를 읽을 수 없어 보수적으로 제한 중")
 
         if temperature >= 85:
             self.emergency = True
