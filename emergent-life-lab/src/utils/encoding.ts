@@ -1,3 +1,4 @@
+import { RULES } from "@/src/ca/rules";
 import type { GridBuffer, RuleId } from "@/src/ca/types";
 
 export type EncodedState = {
@@ -30,7 +31,16 @@ export function decodeState(hash: string): EncodedState | null {
 
   try {
     const parsed = JSON.parse(base64UrlDecode(value.slice("state=".length))) as Partial<EncodedState>;
-    if (parsed.version !== 1 || typeof parsed.width !== "number" || typeof parsed.height !== "number" || typeof parsed.cells !== "string") {
+    if (
+      parsed.version !== 1 ||
+      !isPositiveInteger(parsed.width) ||
+      !isPositiveInteger(parsed.height) ||
+      typeof parsed.rule !== "string" ||
+      !Object.hasOwn(RULES, parsed.rule) ||
+      !Number.isSafeInteger(parsed.generation) ||
+      (parsed.generation as number) < 0 ||
+      typeof parsed.cells !== "string"
+    ) {
       return null;
     }
 
@@ -38,6 +48,10 @@ export function decodeState(hash: string): EncodedState | null {
   } catch {
     return null;
   }
+}
+
+function isPositiveInteger(value: unknown): value is number {
+  return Number.isSafeInteger(value) && (value as number) > 0;
 }
 
 export function restoreCells(encoded: EncodedState, target: GridBuffer) {

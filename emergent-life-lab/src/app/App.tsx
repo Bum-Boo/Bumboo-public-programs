@@ -149,7 +149,7 @@ export default function App() {
 
   useEffect(() => {
     const encoded = decodeState(window.location.hash);
-    if (encoded && encoded.width === GRID_WIDTH && encoded.height === GRID_HEIGHT && encoded.rule in RULES) {
+    if (encoded && encoded.width === GRID_WIDTH && encoded.height === GRID_HEIGHT && Object.hasOwn(RULES, encoded.rule)) {
       restoreCells(encoded, currentGridRef.current);
       generationRef.current = encoded.generation;
       // The shared-state hash only exists on the client, so it is restored after hydration.

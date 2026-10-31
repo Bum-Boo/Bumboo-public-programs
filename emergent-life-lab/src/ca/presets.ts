@@ -97,19 +97,20 @@ export function applyPreset(grid: GridBuffer, presetId: PresetId, rule: RuleDefi
   } else if (presetId === "gosper") {
     drawPoints(grid, centerX - 18, centerY - 5, gosperPoints());
   } else if (presetId === "highlife-replicator") {
-    drawPoints(grid, centerX - 3, centerY - 3, [
+    // Canonical HighLife replicator (RLE 2b3o$bo2bo$o3bo$o2bo$3o!).
+    drawPoints(grid, centerX - 2, centerY - 2, [
       [2, 0],
       [3, 0],
+      [4, 0],
       [1, 1],
       [4, 1],
       [0, 2],
-      [5, 2],
+      [4, 2],
       [0, 3],
-      [5, 3],
+      [3, 3],
+      [0, 4],
       [1, 4],
-      [4, 4],
-      [2, 5],
-      [3, 5]
+      [2, 4]
     ]);
   } else if (presetId === "brians-wave") {
     drawStatePoints(grid, centerX - 13, centerY - 5, [
