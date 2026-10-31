@@ -147,6 +147,8 @@ def serve(path: Path | None = None, controller: Controller | None = None):
     previous_umask = os.umask(0o077)
     try:
         server = ThreadedServer(str(path), Handler)
+    except OSError as exc:
+        raise ControllerError(f"컨트롤러 소켓을 만들지 못했어요: {path.parent} ({exc.strerror})") from exc
     finally:
         os.umask(previous_umask)
     path.chmod(0o600)

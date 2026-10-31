@@ -58,10 +58,17 @@ def wait_for(read, expected, seconds=3):
 
 class SessionBus:
     def __init__(self):
-        from gi.repository import Gio, GLib
+        try:
+            from gi.repository import Gio, GLib
+        except ImportError as exc:
+            raise ControllerError("PyGObject를 불러오지 못해 데스크톱 기능을 쓸 수 없어요.") from exc
 
         self.Gio, self.GLib = Gio, GLib
-        self.bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+        try:
+            self.bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+        except GLib.Error as exc:
+            # Without a session bus only desktop features are unavailable; callers handle this.
+            raise ControllerError("데스크톱 세션 D-Bus에 연결하지 못했어요.") from exc
 
     def call(self, service, path, interface, method, signature=None, args=()):
         try:

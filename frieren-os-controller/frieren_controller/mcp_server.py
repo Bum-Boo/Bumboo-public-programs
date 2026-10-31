@@ -2,13 +2,21 @@
 
 from __future__ import annotations
 
-from functools import partial
-
 from mcp.server import MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
 
 from .client import call as api_call
+from .core import ControllerError
 
-call = partial(api_call, _source="mcp")
+
+def call(operation: str, **args):
+    # ControllerError messages are written for local clients. Report them as an
+    # expected tool failure so MCP clients see the reason instead of a generic crash.
+    try:
+        return api_call(operation, _source="mcp", **args)
+    except ControllerError as exc:
+        raise ToolError(str(exc)) from exc
+
 
 mcp = MCPServer("Frieren OS Controller")
 

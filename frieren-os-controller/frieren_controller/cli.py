@@ -87,7 +87,13 @@ def main(argv=None) -> int:
             serve()
             return 0
         if options.action == "gui":
-            from .gui import main as gui_main
+            try:
+                from .gui import main as gui_main
+            except (ImportError, ValueError) as exc:
+                # PyGObject or the GTK 3 typelib is missing (gi.require_version raises ValueError).
+                raise ControllerError(
+                    f"GTK 3 화면을 열 수 없어요. PyGObject와 GTK 3를 확인해 주세요: {exc}"
+                ) from exc
 
             return gui_main()
         if options.action == "mcp":
