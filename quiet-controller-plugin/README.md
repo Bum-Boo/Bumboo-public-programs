@@ -65,13 +65,17 @@ CPU·전력 한도를 복원하며 전원 관리 패키지와 `/var/lib/freiren-
 
 ## 검증
 
+이 폴더(`quiet-controller-plugin/`)에서 실행해요. 테스트는 Python 3.11 이상의 표준 라이브러리만 사용하므로 지원 기기·root·`psutil`·`python-gobject` 없이 어떤 Linux에서도 돌아가요. `ruff`는 `requirements-dev.txt`로 설치해요.
+
 ```bash
+python -m venv .venv && . .venv/bin/activate   # Arch 시스템 Python은 pip 설치를 막아요
+python -m pip install -r requirements-dev.txt
 python -m unittest discover -s tests -v
 ruff check .
 ruff format --check .
 ```
 
-테스트는 가짜 하드웨어와 전력 프로필을 사용해요. 실제 기기의 설치·업데이트에는 관리자 인증이 필요해요. 실기 검증 결과는 릴리스 노트에 따로 기록해요.
+테스트는 가짜 하드웨어와 전력 프로필을 사용해요. `tests/test_smoke.py`는 임시 디렉터리의 가짜 sysfs와 임시 소켓으로 CLI → 소켓 → 서비스 → sysfs 쓰기 경로 전체를 확인하며 실제 `/sys`, `/etc`, `/var`, systemd, D-Bus는 건드리지 않아요. 설치·제거 스크립트는 하드웨어 거절과 root 확인 경로만 모의 객체로 확인해요. 실제 기기의 설치·업데이트에는 관리자 인증이 필요해요. 실기 검증 결과는 릴리스 노트에 따로 기록해요.
 
 GitHub Actions 설정 예제는 `ci/github-checks.yml`에 있어요. 자동 실행은 등록하지 않았어요. 릴리스 검증은 위 명령으로 로컬에서 수행했어요.
 
