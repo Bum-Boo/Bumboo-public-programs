@@ -32,7 +32,11 @@ class Hardware:
         }
 
     def validate(self) -> dict:
-        identity = self.identity()
+        try:
+            identity = self.identity()
+        except OSError as error:
+            # Machines without DMI or a cpufreq policy are refused with the same message.
+            raise RuntimeError("이 설정은 MSI GL62 6QE / intel_pstate 전용입니다.") from error
         if (
             identity["model"] != "GL62 6QE"
             or "Micro-Star" not in identity["vendor"]
