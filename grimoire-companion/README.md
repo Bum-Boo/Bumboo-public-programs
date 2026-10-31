@@ -64,6 +64,16 @@ See [Getting started](docs/START_HERE.md), [design notes](docs/STYLE_GUIDE.md), 
 QT_QPA_PLATFORM=offscreen .venv/bin/grimoire --demo --capture /tmp/grimoire-preview.png
 ```
 
-The last command writes only the selected capture path. For license boundaries and external dependencies, see [THIRD_PARTY.md](THIRD_PARTY.md). Project code and original artwork use the MIT license.
+The last command writes only the selected capture path. `pytest` includes `tests/test_smoke.py`, which runs the event CLI, `doctor`, the offscreen demo capture and a start/quit cycle with temporary HOME and XDG directories. The Qt parts are skipped if Qt cannot load; the tray, companion placement and CAVA audio still need `tools/smoke_native.py` on a real desktop.
+
+On a headless Linux server or CI runner (verified on Ubuntu 24.04), the offscreen Qt platform fails with `ImportError: libEGL.so.1` unless the Qt runtime libraries are installed:
+
+```sh
+sudo apt-get install -y --no-install-recommends libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3
+```
+
+Korean interface text in captures needs a CJK font such as `fonts-noto-cjk`. The application's control socket lives in `$XDG_STATE_HOME/grimoire/control.sock`; keep that path under about 100 characters, because Unix sockets cannot use longer paths and startup otherwise fails with "Could not open local application socket."
+
+For license boundaries and external dependencies, see [THIRD_PARTY.md](THIRD_PARTY.md). Project code and original artwork use the MIT license.
 
 CI configuration is provided under `ci/` as a reference template. It is not installed as an active GitHub Actions workflow; use the documented local checks.
