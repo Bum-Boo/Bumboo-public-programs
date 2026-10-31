@@ -50,6 +50,12 @@ def load_pet_asset(asset_dir: Path | str | None) -> PetAsset:
     trust_alpha = bool(config.get("trustAlpha") or config.get("codexCompatible"))
     sheet_name = str(config.get("spritesheetPath") or "spritesheet.webp")
     sheet_path = root / sheet_name
+    # The spritesheet is served over HTTP, so it must stay inside the asset dir
+    # (no absolute paths or ".." escapes from a third-party pet.json).
+    try:
+        sheet_path.resolve().relative_to(root.resolve())
+    except (OSError, ValueError):
+        return PetAsset(asset_id=asset_id, display_name=display_name, description=description, trust_alpha=trust_alpha)
     if not sheet_path.exists() or not sheet_path.is_file():
         return PetAsset(asset_id=asset_id, display_name=display_name, description=description, trust_alpha=trust_alpha)
     return PetAsset(
@@ -317,7 +323,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Zero-token Hermes result pet")
     parser.add_argument("--profile", default="default", help="Hermes profile whose state.db should be read")
     parser.add_argument("--db", type=Path, default=None, help="Explicit Hermes state.db path")
-    parser.add_argument("--source", action="append", default=["telegram"], help="Allowed session source; repeatable")
+    parser.add_argument("--source", action="append", default=None, help="Allowed session source; repeatable (default: telegram)")
     parser.add_argument("--max-chars", type=int, default=120, help="Maximum snippet length")
     parser.add_argument("--asset-dir", type=Path, default=default_asset_dir(), help="Directory containing pet.json and spritesheet.webp")
     mode = parser.add_mutually_exclusive_group()
@@ -334,7 +340,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     args = build_parser().parse_args()
     db_path = args.db or default_state_db(args.profile)
-    source = HermesStateSource(db_path, allowed_sources=set(args.source or []))
+    source = HermesStateSource(db_path, allowed_sources=set(args.source or ["telegram"]))
     asset = load_pet_asset(args.asset_dir)
 
     if args.watch:

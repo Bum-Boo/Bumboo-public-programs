@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from contextlib import closing
 from dataclasses import dataclass
 from pathlib import Path
 import sqlite3
 from typing import Iterable
+from urllib.parse import quote
 
 
 @dataclass(frozen=True)
@@ -48,9 +50,11 @@ class HermesStateSource:
 
         query += " order by m.id desc limit 1"
 
-        uri = f"file:{self.db_path.as_posix()}?mode=ro"
+        # Percent-encode the path so '?', '#' or '%' in a directory name are not
+        # parsed as URI query/fragment/escape characters by SQLite.
+        uri = f"file:{quote(self.db_path.as_posix(), safe='/:')}?mode=ro"
         try:
-            with sqlite3.connect(uri, uri=True, timeout=1.0) as conn:
+            with closing(sqlite3.connect(uri, uri=True, timeout=1.0)) as conn:
                 row = conn.execute(query, params).fetchone()
         except sqlite3.Error:
             return None
