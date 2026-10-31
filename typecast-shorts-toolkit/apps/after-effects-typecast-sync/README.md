@@ -34,3 +34,7 @@ The script imports `voice.wav` or `voice.mp3`, places it at time `0`, deletes ex
 - If `CAPTION_TEMPLATE` exists, it is duplicated so its styling is preserved where After Effects exposes it through layer duplication.
 - If no template exists, the script creates simple centered lower-third text layers.
 - `script.txt` alone is not enough for accurate sync. Use `captions.srt`, `captions.vtt`, or timestamped `typecast.json`.
+
+## Host smoke script
+
+`src/aeSmokeTest.jsx` is a development check for a real After Effects install. It is not run by `npm test` and has not been run in this public packaging pass. It expects a fixture folder `samples/smoke_runtime_srt/` (voice audio plus a three-cue SRT starting at 0-1.5 s and 1.75 s) that is not shipped in this repository. It calls `app.newProject()`, saves `ae_smoke_test.aep` and a report into that folder, and then quits After Effects, so only run it with nothing else open.

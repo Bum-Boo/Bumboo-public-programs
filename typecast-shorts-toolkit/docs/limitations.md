@@ -20,7 +20,11 @@ References:
 
 ## After Effects Runtime Parser
 
-After Effects ScriptUI runs ExtendScript/JSX rather than modern TypeScript modules. The AE panel includes an ExtendScript-compatible parser implementation aligned with the shared TypeScript core. The shared core remains the tested source of parser behavior; a later build step can generate the JSX include automatically from the core package.
+After Effects ScriptUI runs ExtendScript/JSX rather than modern TypeScript modules. The AE panel and the Premiere `main.js` each include a hand-written copy of the parser instead of importing the shared TypeScript core. The shared core remains the reference parser behavior; a later build step can generate the JSX include automatically from the core package. Known differences in the panel copies: word-level `typecast.json` (word timestamps without cue text) is not grouped into cues, and the After Effects VTT parser does not skip `NOTE`/`STYLE` blocks explicitly. The npm tests load these copies under Node with fake host objects, which covers their parsing but not the Adobe host behavior.
+
+## WebVTT Text
+
+VTT inline markup such as `<v Speaker>`, `<b>` or `<c.class>` is kept as literal text in cue captions. Remove it from the VTT before generating captions.
 
 ## Styling
 

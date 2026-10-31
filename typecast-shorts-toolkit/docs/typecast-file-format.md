@@ -69,4 +69,6 @@ Word-level data is grouped into readable cue chunks:
 }
 ```
 
-Millisecond-like fields with `_ms` suffix or very large numeric values are normalized to seconds.
+Millisecond fields `start_ms`, `end_ms` and `duration_ms` are converted to seconds. Any other start/end value whose absolute value is greater than 10000 is also treated as milliseconds, so plain second values above 10000 (about 2.8 hours) are not supported.
+
+The shared core groups word-level data into cues. The parsers embedded in the After Effects and Premiere panels only read cue-level arrays (objects with a text key such as `text` or `caption`); for word-only `typecast.json` they fall back to `captions.srt`/`captions.vtt`.

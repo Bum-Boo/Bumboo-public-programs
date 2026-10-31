@@ -12,7 +12,17 @@ npm test
 npm run build
 ```
 
-The shared core parses SRT, VTT and supported timestamp JSON, validates folders and exports SRT. Tests verify this core; they do not execute Adobe APIs. `samples/synthetic` contains fabricated captions and an original generated sine tone.
+`npm ci` installs the workspace dev tools (TypeScript, Node types). `npm test` compiles `packages/typecast-sync-core` to `dist/` and runs every `packages/typecast-sync-core/tests/*.test.mjs` file with the built-in `node --test` runner; `npm run build` only compiles. Verified on Linux with Node 22.
+
+The shared core parses SRT, VTT and supported timestamp JSON, validates folders and exports SRT. `samples/synthetic` contains fabricated captions and an original generated sine tone.
+
+What the tests cover:
+
+- `parsers.test.mjs`, `smoke.test.mjs`: core parsers and the end-to-end path on synthetic folders (discover job folder, parse, normalize, validate, export SRT, reparse), including `samples/synthetic`, CRLF/BOM input, `,`/`.` millisecond separators, VTT headers/NOTE/STYLE/cue settings and overlap warnings.
+- `panels.smoke.test.mjs`: the parser and job-discovery JavaScript embedded in the After Effects JSX and in the Premiere `main.js`, loaded under Node with small fake host objects (ExtendScript `File`/`Folder`, UXP storage, Premiere project, DOM), plus a check that `manifest.json` is valid and references existing files.
+- `regressions.test.mjs`: fixed defects.
+
+Not covered: anything that needs the Adobe hosts (footage import, layer creation, Premiere caption tracks, UXP permissions). The tests never execute Adobe APIs. The Premiere `src/*.ts` helpers are not part of `npm run build` and are not loaded by the panel (`index.html` loads the standalone `main.js`).
 
 ## After Effects ScriptUI
 
