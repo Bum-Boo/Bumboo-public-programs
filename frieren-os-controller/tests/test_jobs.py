@@ -13,6 +13,26 @@ from frieren_controller.core import Controller, ControllerError
 from frieren_controller.jobs import JobEditor
 from frieren_controller.server import dispatch
 
+
+def user_verifier_available() -> bool:
+    """systemd-analyze --user verify needs a reachable user manager runtime, not just the binary."""
+    if not Path("/usr/bin/systemd-analyze").is_file():
+        return False
+    with tempfile.TemporaryDirectory() as directory:
+        probe = Path(directory) / "frieren-probe.service"
+        probe.write_text("[Service]\nExecStart=/usr/bin/true\n")
+        try:
+            result = subprocess.run(
+                ["/usr/bin/systemd-analyze", "--user", "verify", "--man=no", str(probe)],
+                capture_output=True,
+                timeout=15,
+                check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired):
+            return False
+    return result.returncode == 0
+
+
 SERVICE = "[Unit]\nDescription=Test\n[Service]\nExecStart=/usr/bin/true\n[Install]\nWantedBy=default.target\n"
 
 
@@ -162,7 +182,9 @@ class JobTests(unittest.TestCase):
         self.assertEqual((self.units / "demo.service").read_text(), SERVICE)
         self.assertFalse((self.c.state_dir / "job-demo.service.json").exists())
 
-    @unittest.skipUnless(Path("/usr/bin/systemd-analyze").is_file(), "systemd verifier unavailable")
+    @unittest.skipUnless(
+        user_verifier_available(), "systemd-analyze --user verify unavailable (no user manager)"
+    )
     def test_installed_override_cannot_hide_invalid_new_command_in_real_verifier(self):
         self.runner.vendor["demo.service"] = SERVICE.replace(
             "[Service]\n", "[Service]\n# /ordinary-comment.conf\n"
