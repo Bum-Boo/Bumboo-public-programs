@@ -14,7 +14,7 @@ npm ci
 npm run dev
 ```
 
-Open the loopback URL printed by Vite. Adjust tempo and signal strength to regenerate deterministic synthetic data, choose a visual treatment, or pause/resume. `npm run build` creates a static site in `dist/`; `npm run preview` serves that build locally.
+Open the loopback URL printed by Vite (the servers bind to 127.0.0.1 only; Vite uses port 5173 for `dev` and 4173 for `preview` unless that port is busy). Adjust tempo and signal strength to regenerate deterministic synthetic data (this restarts the generated signal), choose a visual treatment, or pause/resume (resume continues from where motion was paused). `npm run build` creates a static site in `dist/`; `npm run preview` serves that build locally.
 
 ## Development checks
 
@@ -22,7 +22,7 @@ Open the loopback URL printed by Vite. Adjust tempo and signal strength to regen
 npm run check
 ```
 
-The checks typecheck the app, exercise generated signal and driver behavior with Node's test runner, and build the static site. Rendering still requires a browser with WebGL2 for a visual check.
+The checks run `npm run typecheck`, `npm test`, and `npm run build` in that order: they typecheck the app, exercise generated signal, preset, driver, and pause/resume clock behavior with Node's test runner (`tests/*.test.ts`), and build the static site. The tests do not need a browser; rendering still requires a browser with WebGL2 for a visual check.
 
 ## License
 

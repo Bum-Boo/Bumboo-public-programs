@@ -2,6 +2,7 @@ import "./global.css";
 import { getSoundscapeScene } from "./soundscape/scenes";
 import { SoundscapeDriver } from "./soundscape/soundscape-driver";
 import { SoundscapeRenderer } from "./soundscape/soundscape-renderer";
+import { PlaybackClock } from "./playback-clock";
 import { createSyntheticTrack } from "./synthetic-track";
 
 function required<T extends Element>(selector: string): T {
@@ -24,9 +25,8 @@ let scene = getSoundscapeScene(preset.value);
 let renderer = SoundscapeRenderer.create(canvas, scene, { lowPower: matchMedia("(pointer: coarse)").matches });
 let driver = new SoundscapeDriver(scene);
 let renderState = driver.update(0, 0, 0, track);
-let playing = true;
-let startedAt = performance.now();
-let lastFrame = startedAt;
+const clock = new PlaybackClock(performance.now());
+let lastFrame = performance.now();
 let frameId = 0;
 
 if (!renderer) {
@@ -52,7 +52,7 @@ function regenerate() {
   track = createSyntheticTrack(Number(tempo.value), Number(strength.value) / 100);
   driver = new SoundscapeDriver(scene);
   renderState = driver.update(0, 0, 0, track);
-  startedAt = performance.now();
+  clock.restart(performance.now());
   tempoValue.value = `${track.tempo} BPM`;
   strengthValue.value = `${strength.value}%`;
 }
@@ -67,10 +67,11 @@ preset.addEventListener("change", () => {
   resize();
 });
 toggle.addEventListener("click", () => {
-  playing = !playing;
-  toggle.textContent = playing ? "Pause motion" : "Resume motion";
-  toggle.setAttribute("aria-pressed", String(playing));
-  if (playing) startedAt = performance.now();
+  const now = performance.now();
+  if (clock.playing) clock.pause(now);
+  else clock.resume(now);
+  toggle.textContent = clock.playing ? "Pause motion" : "Resume motion";
+  toggle.setAttribute("aria-pressed", String(clock.playing));
 });
 
 function animate(now: number) {
@@ -78,9 +79,9 @@ function animate(now: number) {
   if (!renderer) return;
   const dt = Math.min(0.1, Math.max(0, (now - lastFrame) / 1000));
   lastFrame = now;
-  const elapsed = Math.max(0, (now - startedAt) / 1000);
-  const songTime = playing ? elapsed % (track.frameCount / track.fps) : null;
-  if (playing) renderState = driver.update(dt, elapsed, songTime, track);
+  const elapsed = clock.elapsed(now);
+  const songTime = clock.playing ? elapsed % (track.frameCount / track.fps) : null;
+  if (clock.playing) renderState = driver.update(dt, elapsed, songTime, track);
   renderer.render(renderState);
 }
 frameId = requestAnimationFrame(animate);
