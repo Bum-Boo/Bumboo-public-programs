@@ -11,19 +11,21 @@ python3 -m venv .venv
 (cd components/agent-task && ../../.venv/bin/python -m unittest -v)
 export AGENT_WORKFLOW_PYTHON="$PWD/.venv/bin/python"
 export PATH="$PWD/bin:$PATH"
-export AGENT_TASK_VAULT=/absolute/path/to/your/vault
+export AGENT_TASK_VAULT=/absolute/path/to/your/vault   # e.g. a copy: cp -r examples/vault /tmp/agent-vault
 agent-context --vault "$AGENT_TASK_VAULT" preview
+agent-context --vault "$AGENT_TASK_VAULT" refresh   # writes 00_System/Now.md; check fails until it exists
+agent-context --vault "$AGENT_TASK_VAULT" check
 agent-task --vault "$AGENT_TASK_VAULT" list
 ```
 
-Vault layout: `00_System/Now.md` is derived from `30_Projects/<project>/00 현재 상태.md`. State frontmatter requires project, status, done, summary, next, updated and agent; aliases is optional. `done` is user controlled. `refresh` refuses manual board changes and never omits projects to fit the byte budget. Start with the synthetic `examples/vault`.
+Vault layout: `00_System/Now.md` is derived from `30_Projects/<project>/00 현재 상태.md`. State frontmatter requires project, status, done, summary, next, updated and agent; aliases is optional. `done` is user controlled. `refresh` refuses manual board changes and never omits projects to fit the byte budget. Start with a copy of the synthetic `examples/vault` (`refresh` writes into the vault). The root `unittest` run includes `tests/test_smoke.py`, which drives the `bin/` wrappers end to end with a temporary HOME and stub `codex`/`claude` executables.
 
 Generate a local spec with `python3 examples/make-offline-spec.py > /tmp/offline.json`, then `agent-verify run /tmp/offline.json --out /absolute/new-receipt-directory` executes declared argv checks and records source/log hashes. Review commands first: this is not a sandbox or credential scrubber.
 
-Task leases are local and advisory, not distributed locking. Optional Claude hooks can be installed by the separately invoked `components/agent-task/install_claude_hooks.py`; it preserves existing hooks and backs up settings. No hooks or timers are installed automatically. Keep this checkout at a stable path if installing hooks.
+Task leases are local and advisory, not distributed locking. Optional Claude hooks can be installed by the separately invoked `components/agent-task/install_claude_hooks.py` (for example `.venv/bin/python components/agent-task/install_claude_hooks.py`); it writes `~/.claude/settings.json` (creating it if absent), preserves existing hooks and backs up settings to `~/.local/share/agent-task/backups/`. No hooks or timers are installed automatically. Keep this checkout at a stable path if installing hooks.
 
 ## Optional orchestration
 
-`agent-orchestrate` requires already authenticated subscription Codex and Claude CLIs. Remote checks currently require an independently configured `~/.local/bin/agent-remote` with a personal host alias `himmel`; that adapter, backup tooling and private host configuration are not bundled. Review-only jobs without checks can run locally. Systemd units expect wrappers installed in `~/.local/bin` and are opt-in. Do not point jobs at unreviewed inputs or copy credentials into jobs. See `orchestration.md` for queue behavior.
+`agent-orchestrate` requires already authenticated subscription Codex and Claude CLIs. Remote checks currently require an independently configured `~/.local/bin/agent-remote` with a personal host alias `himmel`; that adapter, backup tooling and private host configuration are not bundled. Review-only jobs without checks can run locally. Systemd units expect wrappers installed in `~/.local/bin` (e.g. `ln -s "$PWD/bin/agent-orchestrate" ~/.local/bin/`; wrappers follow the symlink back to this checkout) and are opt-in. Do not point jobs at unreviewed inputs or copy credentials into jobs. See `orchestration.md` for queue behavior.
 
 MIT applies to this repository code. PyYAML is a separately installed dependency under its own license. No user vault, secrets, personal examples or runtime state is distributed.
