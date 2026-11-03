@@ -76,4 +76,4 @@ Korean interface text in captures needs a CJK font such as `fonts-noto-cjk`. The
 
 For license boundaries and external dependencies, see [THIRD_PARTY.md](THIRD_PARTY.md). Project code and original artwork use the MIT license.
 
-CI configuration is provided under `ci/` as a reference template. It is not installed as an active GitHub Actions workflow; use the documented local checks.
+CI configuration under `ci/` is a reference template for a standalone checkout. In this repository the same checks run from the root workflow `.github/workflows/public-programs-smoke.yml`.

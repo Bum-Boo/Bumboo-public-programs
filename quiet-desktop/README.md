@@ -103,7 +103,7 @@ desktop-file-validate packaging/io.github.BumBoo.FreirenQuiet.desktop
 python -m freiren_quiet gui
 ```
 
-테스트는 가상 sysfs와 가짜 PPD, 임시 Unix 소켓을 사용하며 실제 CPU 설정을 바꾸지 않습니다. 핵심 로직 테스트에는 GTK·D-Bus·psutil·root 권한이 필요하지 않습니다. `desktop-file-validate`는 `desktop-file-utils` 패키지에 있습니다. `gui` 실행과 `tests/test_smoke.py`의 GTK 시작 테스트에는 python-gobject(PyGObject)·GTK 3·psutil과 디스플레이가 필요합니다. 없으면 그 테스트는 건너뜁니다. Ubuntu에서는 `sudo apt-get install desktop-file-utils python3-gi gir1.2-gtk-3.0 python3-psutil xvfb` 후 시스템 Python으로 `xvfb-run -a /usr/bin/python3 -m unittest discover -s tests -v`처럼 실행할 수 있습니다(서비스가 없으면 창에 연결 오류만 표시합니다). ci/의 참고 템플릿은 Python 3.11, 3.14 검증을 정의합니다. 자동 CI는 등록하지 않았으며 위 명령으로 로컬 검증합니다.
+테스트는 가상 sysfs와 가짜 PPD, 임시 Unix 소켓을 사용하며 실제 CPU 설정을 바꾸지 않습니다. 핵심 로직 테스트에는 GTK·D-Bus·psutil·root 권한이 필요하지 않습니다. `desktop-file-validate`는 `desktop-file-utils` 패키지에 있습니다. `gui` 실행과 `tests/test_smoke.py`의 GTK 시작 테스트에는 python-gobject(PyGObject)·GTK 3·psutil과 디스플레이가 필요합니다. 없으면 그 테스트는 건너뜁니다. Ubuntu에서는 `sudo apt-get install desktop-file-utils python3-gi gir1.2-gtk-3.0 python3-psutil xvfb` 후 시스템 Python으로 `xvfb-run -a /usr/bin/python3 -m unittest discover -s tests -v`처럼 실행할 수 있습니다(서비스가 없으면 창에 연결 오류만 표시합니다). ci/의 참고 템플릿은 Python 3.11, 3.14 검증을 정의합니다. 이 저장소에서는 루트 워크플로 `.github/workflows/public-programs-smoke.yml`이 같은 검사를 실행합니다.
 
 ```bash
 python -m venv .venv
@@ -124,4 +124,4 @@ python scripts/verify_gui.py --confirm-live --screenshot artifacts/window.png
 
 This fresh public history contains user-owned program code and dependency notices, without private runtime state or machine data. The supported hardware remains MSI GL62 6QE; installation changes CPU/power settings and requires the original documented hardware checks. Tests use mocks; this packaging pass did not run installation or hardware control. The upstream private development repository remains separate.
 
-CI configuration is provided under `ci/` as a reference template. It is not installed as an active GitHub Actions workflow; use the documented local checks.
+CI configuration under `ci/` is a reference template for a standalone checkout. In this repository the same checks run from the root workflow `.github/workflows/public-programs-smoke.yml`.
