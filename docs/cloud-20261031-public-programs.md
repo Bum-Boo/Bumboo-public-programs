@@ -17,7 +17,7 @@
 | aid-vfx-toolkit | 테스트 없음, headless에서 landmark 실패 | 11 OK | 1 + 설정 1 |
 | grimoire-companion | pytest 11 passed, **offscreen 캡처 실패(libEGL)** | 24 passed, 1 skip | 4 |
 | frieren-os-controller | unittest 82 중 **1 fail + 6 error** | 96 OK (xvfb, skip 1) | 4 |
-| agent-workflow | (아래 절 참고) | | |
+| agent-workflow | unittest 29 + 20 OK, **`check`가 `refresh` 전 실패** | 34 + 21 OK | 2 |
 
 CI: `.github/workflows/public-programs-smoke.yml` — 도구별 job, Linux만. 파일 상단에 커버하지 않는 범위를 명시했습니다. 루트 README의 "CI는 `ci/` 참고 템플릿뿐" 문장은 이 워크플로 추가로 더 이상 정확하지 않으므로 함께 고쳤습니다.
 
@@ -118,7 +118,14 @@ CI: `.github/workflows/public-programs-smoke.yml` — 도구별 job, Linux만. �
 - 이후: `/usr/bin/python3.12 -m venv --system-site-packages`에서 96 OK(skip 2), `xvfb-run -a`에서 96 OK(skip 1), ruff check/format OK.
 
 ### agent-workflow
-(작성 중)
+- 이전: Python 3.13 venv `pip install -r requirements.txt` OK(PyYAML 6.0.3), 루트 `unittest -v` 29 OK, `components/agent-task` 20 OK, `agent-context preview`·`agent-task list` rc 0, `make-offline-spec.py` → `agent-verify run`/`check` rc 0. **`agent-context check`는 `refresh` 전에는 `00_System/Now.md` 없음으로 rc 2** — README에 순서가 없음. 또 `refresh`가 예제 vault에 쓰기 때문에 사본을 쓰라는 안내가 필요 → README 14–28행 수정(refresh/check 순서, vault 사본, 훅 설치 명령, `~/.local/bin` 심볼릭 링크 설치).
+- 검증된 결함
+  - `bin/*` 래퍼가 `$0`을 심볼릭 링크 해석 없이 써서, systemd 유닛이 기대하는 `~/.local/bin/agent-orchestrate` 링크 설치에서 `~/.local/orchestrate.py`를 찾다 rc 2 → `bin/agent-context:3-4` 등 래퍼 4개(`readlink -f`, 실패 시 `$0`). 테스트 `tests/test_smoke.py::test_wrappers_work_through_symlink_install`.
+  - `install_claude_hooks.py`가 `~/.claude/settings.json`이 없으면 `FileNotFoundError` → `components/agent-task/install_claude_hooks.py:18-27`(0600 `{}` 파일을 배타적으로 생성). 테스트 `test_hook_install_creates_missing_settings_in_temp_home`(임시 HOME에서 실제 스크립트 실행, 재실행 시 변경 없음 확인).
+- 정적 위험: `verify.py`의 숫자가 아닌 `timeout_seconds`·객체가 아닌 check, `orchestrate.py submit`의 `source` 누락 등은 traceback으로 거부(잘못된 결과는 없음). 옛 산문형 노트에서 `agent_context.py:62`가 `30_Projects/Index.md`를 부분 문자열로 매칭해 짧은 프로젝트 이름이 다른 별칭을 가져올 수 있고 로캘 기본 인코딩으로 읽음.
+- 이미 커버됨: 입력 고정·비밀 제외, 큐 잠금·크래시 복구, 리뷰 판정 검사, lease 소유권·훅 fail-open, receipt 만료.
+- 스모크: `tests/test_smoke.py` — 임시 HOME, vault 사본, PATH의 가짜 `codex`/`claude`로 context/task/verify/orchestrate 전 경로.
+- 이후: 루트 34 OK, `components/agent-task` 21 OK(3.11/3.13), README 명령 모두 rc 0(3.12 포함).
 
 ## 이 VM에서 검증하지 못한 것
 - Windows·macOS 전부, Wayland, 실제 KDE Plasma 세션·KWin·PolicyKit·systemd user/system manager·cronie.
