@@ -15,6 +15,16 @@ from agent_task import atomic_write, json_text
 
 def install(settings_path=None, backup_root=None):
     settings_path = Path(settings_path or Path.home() / '.claude/settings.json')
+    if not settings_path.exists():
+        # Fresh Claude installs may not have a user settings file yet; create a
+        # minimal one exclusively (never overwrite a concurrently created file).
+        settings_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            with settings_path.open('x') as stream:
+                stream.write('{}\n')
+            os.chmod(settings_path, 0o600)
+        except FileExistsError:
+            pass
     original = settings_path.read_bytes()
     before = json.loads(original)
     after = copy.deepcopy(before)

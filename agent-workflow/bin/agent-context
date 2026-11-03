@@ -1,3 +1,5 @@
 #!/bin/sh
-TASK_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+# Follow a symlink (e.g. ~/.local/bin/<name> -> checkout/bin/<name>) back to the checkout.
+SELF=$(readlink -f -- "$0" 2>/dev/null) || SELF=$0
+TASK_ROOT=$(CDPATH= cd -- "$(dirname -- "$SELF")/.." && pwd)
 exec "${AGENT_WORKFLOW_PYTHON:-python3}" "$TASK_ROOT/agent_context.py" "$@"

@@ -258,6 +258,22 @@ class TaskTests(unittest.TestCase):
         self.assertEqual(install(path, self.base / 'backups')['changed'], [])
         self.assertEqual(path.read_bytes(), first_bytes)
 
+    def test_hook_install_creates_missing_settings_in_temp_home(self):
+        # Regression: a fresh HOME without ~/.claude/settings.json used to crash
+        # with FileNotFoundError. Runs the real script with a temporary HOME only.
+        home = self.base / 'home'
+        home.mkdir()
+        env = {**self.env, 'HOME': str(home)}
+        script = str(Path(__file__).with_name('install_claude_hooks.py'))
+        proc = subprocess.run([sys.executable, script], env=env, capture_output=True, text=True, timeout=10)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        settings = home / '.claude/settings.json'
+        hooks = json.loads(settings.read_text())['hooks']
+        self.assertEqual(sorted(hooks), sorted(taskmod.EVENTS))
+        self.assertEqual(settings.stat().st_mode & 0o777, 0o600)
+        again = subprocess.run([sys.executable, script], env=env, capture_output=True, text=True, timeout=10)
+        self.assertEqual(json.loads(again.stdout)['changed'], [])
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
