@@ -1,4 +1,4 @@
-# 공개 프로그램 10종 Linux 검증 보고서 (cloud, 2026-10-31)
+# 공개 프로그램 10종 Linux 검증 보고서 (cloud, 2026-10-31 ~ 11-03)
 
 브랜치 `claude/public-programs-docs-verify-q8dekf` (기준: `main` d7561b8). 각 도구의 README를 깨끗한 clone에서 Linux(Ubuntu 24.04 VM, Python 3.11/3.12/3.13, Node 22.23.4, npm 10.9.9)로 그대로 따라 하고, 스모크 테스트와 CI 워크플로를 추가하고, 재현된 결함만 고쳤습니다. 도구별로 병렬 하위 에이전트가 1차 작업을 했고, 변경은 모두 직접 diff 검토 후 도구별 커밋으로 나눴습니다. 의존성 버전·lockfile·라이선스·릴리스 메타데이터는 바꾸지 않았고, 모든 테스트 데이터는 합성입니다(외부 서비스·모델 다운로드 호출 없음).
 
@@ -126,6 +126,26 @@ CI: `.github/workflows/public-programs-smoke.yml` — 도구별 job, Linux만. �
 - 이미 커버됨: 입력 고정·비밀 제외, 큐 잠금·크래시 복구, 리뷰 판정 검사, lease 소유권·훅 fail-open, receipt 만료.
 - 스모크: `tests/test_smoke.py` — 임시 HOME, vault 사본, PATH의 가짜 `codex`/`claude`로 context/task/verify/orchestrate 전 경로.
 - 이후: 루트 34 OK, `components/agent-task` 21 OK(3.11/3.13), README 명령 모두 rc 0(3.12 포함).
+
+## 최종 재검증 (푸시된 브랜치의 새 clone, CI job과 같은 명령)
+
+임시 HOME에서 실행. 스크립트는 job별 명령을 그대로 따릅니다.
+
+| job | 명령 | 결과 |
+| --- | --- | --- |
+| emergent-life-lab | `npm ci && npm run check` | 17/17, build OK |
+| procedural-soundscape | `npm ci && npm run check` | 13/13, build OK |
+| typecast-shorts-toolkit | `npm ci && npm test && npm run build` | 35 (34 pass, 1 skip), build OK |
+| hermes-pet | `python3.11/3.13 -m unittest discover -s tests -v` | 23 OK ×2 |
+| agent-workflow | `pip install -r requirements.txt`; `python -m unittest -v`; `components/agent-task`에서 같은 명령 | 34 OK, 21 OK |
+| aid-vfx-toolkit | apt `ffmpeg libgles2 libegl1`; `pip install -r requirements.txt`; `python -m unittest discover -s tests -v` | 11 OK |
+| grimoire-companion | `pip install '.[dev]'`; `ruff check src tests tools`; `QT_QPA_PLATFORM=offscreen pytest -q`; `grimoire --demo --capture …` | ruff OK, 24 passed 1 skipped, 캡처 OK |
+| frieren-os-controller | `/usr/bin/python3.12 -m venv --system-site-packages .venv`; `pip install -e . ruff`; `xvfb-run -a … unittest discover -s tests`; `ruff check .`; `ruff format --check .` | 96 OK (skip 1), ruff OK |
+| quiet-desktop (3.11, 3.13) | `unittest discover -s tests -v`; `compileall`; `pip install -r requirements-dev.txt`; `ruff check .`; `ruff format --check .` | 49 OK (skip 1), ruff OK |
+| quiet-controller-plugin (3.11, 3.13) | 위와 같음 | 57 OK, ruff OK |
+| quiet-desktop-gtk | `desktop-file-validate …`; `xvfb-run -a /usr/bin/python3.12 -m unittest discover -s tests -v` | OK, 49 OK (skip 0) |
+
+주의: 이 VM의 `/usr/bin/python3`는 3.13이라 apt `python3-gi`(3.12용)를 import하지 못해, 처음 실행에서 frieren은 gi 관련 1 fail + 5 error, quiet-desktop-gtk는 GUI 테스트 skip이 났습니다. `/usr/bin/python3.12`로 다시 실행해 위 결과를 얻었습니다. GitHub `ubuntu-latest`(24.04)의 `/usr/bin/python3`는 3.12이므로 워크플로는 `/usr/bin/python3`를 그대로 씁니다. 실제 GitHub 실행에서 다르면 이 부분을 먼저 확인하세요.
 
 ## 이 VM에서 검증하지 못한 것
 - Windows·macOS 전부, Wayland, 실제 KDE Plasma 세션·KWin·PolicyKit·systemd user/system manager·cronie.
